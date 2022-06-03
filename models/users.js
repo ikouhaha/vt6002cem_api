@@ -10,7 +10,7 @@ exports.findByUsername = async function (username) {
 
 
 exports.findByFID =  async function (fid) {
-  let data = await db.run_query(collection, {'fid': fid})
+  let data = await db.run_one_query(collection, {'fid': fid})
   return data
 }
 exports.getUserById = async function (id){

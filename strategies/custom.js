@@ -8,28 +8,31 @@ const users = require('../models/users')
 const checkUser = async (req, done) => {
     // look up the user and check the password if the user exists
     // call done() with either an error or the user, depending on outcome
-    
-    let result
-    try {
-        var token = req.headers.authorization.split(" ")[1];
-        var user = await admin.auth().verifyIdToken(token)
 
-        result = await users.findByUsername(jwt_payload.username)
-    } catch (error) {
-        console.error(`Error during jwt authentication for user ${username}`)
-        return done(error)
-    }
-    if (result.length) {
-        const user = result[0]
+    try {
+
+        var token = req.headers.authorization.replace("Bearer ", "");
+        var user = await admin.auth().verifyIdToken(token)
+        result = await users.findByFID(user.uid)
+
+
+        if (!result) {
+            return done(null, { status: 401, message: "No user found", firebaseUser: user })
+        }
+
+        user = result
         //security
         delete user.password
-        //delete user.googleId
-        return done(null, user)
-    } else {
-        //console.log(`No user found with username `)
+        delete user.googleId
+
+
+        return done(null, user);
+    }
+    catch (error) {
+        console.error(`Error during authentication for user ${error}`)
+        return done(null, { status: 401, message: error.message })
     }
 
-    return done(null, false) // token expired?
 }
 
 

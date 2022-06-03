@@ -46,9 +46,11 @@ exports.createErrorResponse = (ctx, ex, code = 500) => {
         let values = Object.values(ex.keyValue)
         keys = keys.join(',')
         ctx.status = code
+        ctx.message  = `The following ${keys}:${values} has been registered`
         ctx.body = { "message": `The following ${keys}:${values} has been registered` }
     } else {
         ctx.status = code
+        ctx.message  = { "message": ex.message }
         ctx.body = { "message": ex.message }
     }
 }

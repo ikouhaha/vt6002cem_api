@@ -5,23 +5,11 @@ module.exports = {
     "description": "A user in the system",
     "type": "object",
     "properties": {
-        "firstName": {
-            "description": "The user's first name",
+        "displayName": {
+            "description": "The user's display name",
             "type": "string"
         },
-        "lastName": {
-            "description": "The user's last name",
-            "type": "string"
-        },
-        "username": {
-            "description": "The user's unique account name in the system",
-            "type": "string",
-            "minLength": 1,
-        },
-        "about": {
-            "description": "about the user",
-            "type": "string"
-        },
+
         "password": {
             "description": "Create user password",
             "type": "string",
@@ -46,8 +34,8 @@ module.exports = {
             "type": "string",
 
         },
-        "googleId": {
-            "description": "for the google register user",
+        "fid": {
+            "description": "for the firebase register user",
             "type": "string"
         },
         "companyCode": {
@@ -55,24 +43,9 @@ module.exports = {
             "type": "string",
 
         },
-        "favourites": {
-            "description": "save favourite pets",
-            "type": "object",
-
-        },
 
 
     },
-    "if": {
-        "properties": {
-            "role": { "const": "staff" }
-        },
-    },
-    "then": {
-        "required": ["companyCode", "username", "password", "email", "role"]
-    },
-    "else": {
-        "required": ["username", "password", "email", "role"]
-    }
+     "required": ["password", "email", "role","fid"]
 
 }

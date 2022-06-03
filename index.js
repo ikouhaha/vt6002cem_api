@@ -19,6 +19,7 @@ const app = new Koa()
 const auth = require('./routes/auth.js')
 const breeds = require('./routes/breeds.js')
 const pets = require('./routes/pets.js')
+const products = require('./routes/products.js')
 const user = require('./routes/users')
 const chat = require('./routes/chat')
 const comments = require('./routes/comments')
@@ -53,6 +54,7 @@ app.use(user.routes())
 app.use(company.routes())
 app.use(favourites.routes())
 app.use(comments.routes())
+app.use(products.routes())
 
 const port = config.PORT
 const host = config.HOST

@@ -13,7 +13,7 @@ router.post('/',passport.authenticate(['basic'],{session:false}), signin)
 router.get('/signout',auth,signout)
 router.post('/google/token',passport.authenticate(['google-token'],{session:false}), googleSigninByToken)
 
-router.post('/fid',passport.authenticate(['custom'],{session:false}))
+router.post('/firebase/token',passport.authenticate(['custom'],{session:false}),firebasesigninByToken)
 
 
 async function signin(ctx, next) {
@@ -68,6 +68,47 @@ async function googleSigninByToken(ctx, next) {
   }
 }
 
+async function firebasesigninByToken(ctx, next) {
+
+  try {
+    
+    if (ctx.isAuthenticated()) {
+      if(ctx.state.user.status){
+        ctx.status = ctx.state.user.status
+        ctx.message = ctx.state.user.message
+        ctx.body = ctx.state.user.message
+        return
+      }
+      ctx.status = 200
+      ctx.body = ctx.state.user
+
+    } else {
+      ctx.status = 401
+    }
+
+  } catch (ex) {
+    util.createErrorResponse(ctx, ex)
+
+  }
+}
+
+async function firebasesignupByToken(ctx, next) {
+
+  try {
+    
+    if (ctx.isAuthenticated()) {
+      firebaseUser = ctx.state.user.firebaseUser
+      
+
+    } else {
+      ctx.status = 401
+    }
+
+  } catch (ex) {
+    util.createErrorResponse(ctx, ex)
+
+  }
+}
 
 
 async function signout(ctx) {
