@@ -6,8 +6,6 @@ const can = require('../permission/user')
 const auth = require('../controllers/auth')
 const router = Router({ prefix: '/api/v1/users' })
 const util = require('../helpers/util')
-const config = require('../config')
-const axios = require('axios')
 
 const { validateUser,validateUserProfile,validateUserPwd,validateUserGoogle } = require('../controllers/validation')
 
@@ -18,7 +16,6 @@ router.put('/:id([0-9]{1,})', auth, validateUserProfile, updateUser)
 router.put('/connect/:id([0-9]{1,})', auth, validateUserGoogle, updateUser)
 // router.del('/:id([0-9]{1,})', auth, deleteUser)
 router.put('/p/:id([0-9]{1,})', auth, validateUserPwd, updateUserPwd)
-
 router.get('/profile',auth, profile)
 
 async function profile(ctx, ext) {
@@ -40,7 +37,7 @@ async function profile(ctx, ext) {
 
 async function getAll(ctx) {
   try {
-    ////check the role permission
+    ////1eck the role permission
     const permission = can.readAll(ctx.state.user)
     if (!permission.granted) {
       ctx.status = 403;
@@ -149,19 +146,17 @@ async function updateUser(ctx) {
       ctx.status = 403;
       return;
     }
-
-    //bind the new google account
-    if(body.googleId){
-      //checking the googleid is used?
-      let googleId = await model.findByGoogleId(body.googleId)
-      if(googleId){
-        ctx.status = 400
-        ctx.body = "The google account is registered"
-        return
-      }
+    
+      if(body.role == "staff"){
+        let company = await companyModel.findByCode(body.companyCode)
+        if (!company) {
+          throw new Error("can't found the company");
+        } else {
+          body.company = company;
+        }
     }
-
-
+    //do not save
+    delete body.confirmPassword
     let result = await model.updateUser(id, body)
     if (result) {
       ctx.status = 201
@@ -183,12 +178,16 @@ async function updateUserPwd(ctx) {
   try {
     let id = parseInt(ctx.params.id)
     const body = ctx.request.body
+
     body.password = util.getHash(body.password)
     //check the role
     const permission = can.update(ctx.state.user, { "id": id })
     if (!permission.granted) {
       ctx.status = 403;
     }
+
+    //do not save
+    delete body.confirmPassword
     let result = await model.updateUser(id, body)
     if (result) {
       ctx.status = 201

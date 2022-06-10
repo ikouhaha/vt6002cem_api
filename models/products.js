@@ -9,8 +9,6 @@ exports.getAll = async function (page, limit, order) {
 }
 
 
-
-
 exports.getAllCount = async function (query={}) {
   let data = await db.run_count(collection, query)
   return data
@@ -46,6 +44,11 @@ exports.getAllByFilter = async function (query,{unlimited=false,page, limit,orde
 
 exports.getById = async function (id) {
   let data = await db.run_one_query(collection, { 'id': parseInt(id) })
+  return data
+}
+
+exports.getByIds = async function (ids) {
+  let data = await db.run_query(collection, { 'id': { $in: ids.map(Number) } })
   return data
 }
 
