@@ -1,6 +1,5 @@
 const Router = require('koa-router')
 
-const companyModel = require('../models/company')
 const model = require('../models/users')
 const can = require('../permission/user')
 const auth = require('../controllers/auth')

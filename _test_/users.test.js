@@ -1,7 +1,5 @@
 const request = require('supertest')
 const app = require('./common/index')
-const userExpected = require("../docs/responseJson/user.json")
-const breedDetailExpected = require("../docs/responseJson/breed.json")
 const helper = require('./common/helper')
 
 

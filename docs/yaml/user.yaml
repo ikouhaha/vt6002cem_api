@@ -14,13 +14,6 @@ get:
   responses:
     '200':
       description: View of user 
-      content:
-          application/json:
-              schema:      # Response body contents
-                type: object
-              examples:
-                expect:  
-                  externalValue: '../responseJson/user.json'
     '403':
       description: no permission to view the user.
     '404':

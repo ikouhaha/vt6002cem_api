@@ -5,8 +5,6 @@ const Router = require('koa-router')
 
 
 const userModel = require('../models/users')
-const breedModel = require('../models/breeds')
-const commentModel = require('../models/comments')
 const model = require('../models/products')
 const can = require('../permission/product')
 const auth = require('../controllers/auth')
@@ -25,7 +23,8 @@ router.get('/:id([0-9]{1,})', authWithPublic, getById);
 router.get('/ids', authWithPublic, getByIds);
 router.get('/image/:id([0-9]{1,})', getImageById);
 router.post('/', auth, validateProduct, createProduct)
-
+router.put('/:id([0-9]{1,})', auth, validateProduct, editProduct)
+router.delete('/:id([0-9]{1,})/:companyCode', auth, deleteProduct)
 
 async function getAll(ctx, next) {
   try {            
@@ -44,6 +43,19 @@ async function getAll(ctx, next) {
     }
     if (results.length) {
       ctx.status = 200
+      
+      for (result of results) {
+        if (ctx.isAuthenticated()) {
+          const canEdit = can.update(ctx.state.user, result).granted
+          const canDelete = can.delete(ctx.state.user, result).granted
+         
+          result.canEdit = canEdit;
+          result.canDelete = canDelete;
+          
+        }
+
+      }
+      
       ctx.body = results          
     }else{
       //return empty
@@ -129,6 +141,54 @@ async function createProduct(ctx) {
     body.createdBy = ctx.state.user.id
     body.companyCode =  ctx.state.user.companyCode
     let result = await model.add(body)
+    if (result) {
+      ctx.status = 201
+      ctx.body = result
+    } else {
+      ctx.status = 201
+      ctx.body = "{}"
+    }
+  } catch (ex) {
+    util.createErrorResponse(ctx, ex)
+
+  }
+}
+
+async function editProduct(ctx) {
+  try {
+    let id = ctx.params.id
+    const body = ctx.request.body
+    const permission = can.update(ctx.state.user,body)
+
+    if (!permission.granted) {
+      ctx.status = 403;
+      return;
+    }
+    let result = await model.update(id,body)
+    if (result) {
+      ctx.status = 201
+      ctx.body = result
+    } else {
+      ctx.status = 201
+      ctx.body = "{}"
+    }
+  } catch (ex) {
+    util.createErrorResponse(ctx, ex)
+
+  }
+}
+
+async function deleteProduct(ctx) {
+  try {
+    let id = ctx.params.id
+    let companyCode = ctx.params.companyCode
+    const permission = can.delete(ctx.state.user,{companyCode:companyCode})
+
+    if (!permission.granted) {
+      ctx.status = 403;
+      return;
+    }
+    let result = await model.delete(id)
     if (result) {
       ctx.status = 201
       ctx.body = result
