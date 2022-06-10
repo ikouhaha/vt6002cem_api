@@ -52,6 +52,9 @@ async function getAll(ctx, next) {
           result.canEdit = canEdit;
           result.canDelete = canDelete;
           
+        }else{
+          result.canEdit = false;
+          result.canDelete = false;
         }
 
       }
@@ -217,17 +220,10 @@ async function getById(ctx) {
         
       }
 
-
-
-      result.comments = await commentModel.getByDogId(id)
-      for(let comment of result.comments){
-        comment.user = await userModel.getById(comment.userId)
-      }
-      const breed = await breedModel.getById(result.breedID)
+    
       const createBy = await userModel.getById(result.createdBy)
 
       ctx.body = result;
-      result.breed = breed
       result.createBy = createBy
       
 
