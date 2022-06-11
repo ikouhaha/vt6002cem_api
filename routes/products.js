@@ -6,6 +6,7 @@ const Router = require('koa-router')
 
 const userModel = require('../models/users')
 const model = require('../models/products')
+
 const can = require('../permission/product')
 const auth = require('../controllers/auth')
 const authWithPublic = require('../controllers/authWithPublic')
@@ -55,6 +56,8 @@ async function getAll(ctx, next) {
         }else{
           result.canEdit = false;
           result.canDelete = false;
+
+
         }
 
       }

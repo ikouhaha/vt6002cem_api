@@ -5,6 +5,7 @@ const can = require('../permission/user')
 const auth = require('../controllers/auth')
 const router = Router({ prefix: '/api/v1/users' })
 const util = require('../helpers/util')
+const companyModel = require('../models/company')
 
 const { validateUser,validateUserProfile,validateUserPwd,validateUserGoogle } = require('../controllers/validation')
 
