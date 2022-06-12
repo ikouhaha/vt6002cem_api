@@ -1,6 +1,6 @@
-config.js
+
 t.js
 node_modules
-*.env
+
 build.py
 serviceAccountKey.json
